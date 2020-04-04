@@ -18,6 +18,12 @@ def to_native_date(pendulum_date):
 
 
 def add_point(category, point_type):
+    if category not in allowed_categories:
+        raise Exception('Category provided is not in the allowed list')
+
+    if point_type not in allowed_point_types:
+        raise Exception('Point type provided is not in the allowed list')
+
     point = Point(category=category, point_type=point_type)
     point.save()
 
