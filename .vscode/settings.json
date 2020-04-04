@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "venv/bin/python2.7",
+    "python.pythonPath": "venv/bin/python3",
     "python.testing.pytestArgs": [
         "."
     ],

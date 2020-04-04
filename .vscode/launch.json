@@ -10,7 +10,7 @@
             "request": "launch",
             "module": "flask",
             "env": {
-                "FLASK_APP": "poyntz/app.py",
+                "FLASK_APP": "poyntz/poyntz.py",
                 "FLASK_ENV": "development",
                 "FLASK_DEBUG": "0"
             },
