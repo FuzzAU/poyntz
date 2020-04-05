@@ -1,10 +1,4 @@
-from poyntz.app import app, db
-from poyntz import models
-from poyntz.views import *
-
-
-def create_tables():
-    db.database.create_tables([models.Point])
+from poyntz.app import app, db, create_tables
 
 
 if __name__ == '__main__':

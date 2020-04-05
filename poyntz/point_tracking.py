@@ -17,14 +17,17 @@ def to_native_date(pendulum_date):
     return d
 
 
-def add_point(category, point_type):
+def add_point(category : str, point_type : str, awarded_date : datetime.date = None):
     if category not in allowed_categories:
         raise Exception('Category provided is not in the allowed list')
 
     if point_type not in allowed_point_types:
         raise Exception('Point type provided is not in the allowed list')
-
-    point = Point(category=category, point_type=point_type)
+    
+    if awarded_date is None:
+        point = Point(category=category, point_type=point_type)
+    else:
+        point = Point(category=category, point_type=point_type, awarded_date = awarded_date)
     point.save()
 
 
@@ -37,7 +40,7 @@ def points_today():
     return list(today_points)
 
 
-def summary_by_point_type_for_period(period):
+def summary_by_point_type_for_period(period : str):
     """
     Get a count of points for a given category over a specified period type
     """

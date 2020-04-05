@@ -1,28 +1,46 @@
 import pytest
-from ..point_tracking import Point, Ladder
+from ..point_tracking import *
+from ..app import *
+import os
 
+
+def cleanup_database():
+    """
+    Clean up test database file if it exists
+    """
+    db_file = app.config.get('DATABASE')['name']
+    if os.path.exists(db_file):
+        print('Cleaning up database file {}'.format(db_file))
+        os.remove(db_file)
+    else:
+        print('Unable to find {} for cleanup'.format(db_file))
+
+
+@pytest.fixture(autouse=True)
+def test_database_setup():
+    cleanup_database()
+    create_tables()
+    yield
+    # Delete the test database
+    print('Finalising')
+    cleanup_database()
+    
 
 def test_ladder():
-    # Create a test with 5 possible points
-    points = Ladder(max_points = 5)
-    
-    points.add_point(Point.good)
-    points.add_point(Point.good)
-    points.add_point(Point.excellent)
-    points.add_point(Point.need_improvement)
-    points.add_point(Point.naughty)
-
-    # Check that we can't add more than the specified number of points
+    # Adding a point type that isn't supported should fail
     with pytest.raises(Exception):
-        points.add_point(Point.add)
+        add_point(allowed_categories[0], 'make_up_point_type')
+    # Adding a category type that isn't supported should fail
+    with pytest.raises(Exception):
+        add_point('made_up_category', allowed_point_types[0])
 
-    # Check we have the right number of points
-    assert len([p for p in points.ladder if p.value is Point.good.value]) == 2
-    assert len([p for p in points.ladder if p.value is Point.excellent.value]) == 1
-    assert len([p for p in points.ladder if p.value is Point.need_improvement.value]) == 1
-    assert len([p for p in points.ladder if p.value is Point.naughty.value]) == 1
+    # Add 'good' points for all categories for today
+    for category in allowed_categories:
+        add_point(category, allowed_point_types[0])
+    
+    # Check that the points for today are in the database
+    today = points_today()
+    assert len(today) == len(allowed_categories)
 
-    points.reset()
-    assert len(points.ladder) == 0
 
     pass
