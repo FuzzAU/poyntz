@@ -1,6 +1,7 @@
-from poyntz.app import app, db, create_tables
+from poyntz.app import app, create_tables
+from poyntz import views
 
 
 if __name__ == '__main__':
     create_tables()
-    app.run()
+    app.run(host='0.0.0.0')

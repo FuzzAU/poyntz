@@ -12,6 +12,9 @@ class BaseConfig(object):
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
+    # FLASK_RUN_PORT = 5000
+    # FLASK_RUN_HOST = '0.0.0.0'
+    EXPLAIN_TEMPLATE_LOADING = False
 
 
 class TestConfig(BaseConfig):

@@ -6,7 +6,22 @@ import datetime
 # The types of points that can be awarded
 allowed_point_types = ['good', 'excellent', 'need_improvement', 'bad']
 # Categories where points can be awarded
-allowed_categories = ['listening', 'packing_up', 'eating', 'sleeping', 'learning']
+allowed_categories = ['listening', 'packing_up', 'eating', 'sleeping', 'learning', 'dressing']
+
+# Map to assist mapping typical spoken words to category
+category_speech_map = {
+    'packing up': 'packing_up',
+    'pack up': 'packing_up',
+    'getting_dressed': 'dressing'
+}
+
+
+# Map to assist mapping typical spoken words to category
+point_type_speech_map = {
+    'very good': 'excellent',
+    'naughty': 'bad',
+    'getting better': 'need_improvement'
+}
 
 
 def to_native_date(pendulum_date):
@@ -17,25 +32,54 @@ def to_native_date(pendulum_date):
     return d
 
 
-def add_point(category : str, point_type : str, awarded_date : datetime.date = None):
+def award_point(category : str, point_type : str, awarded_date : datetime.date = None):
+    """
+    Add a point to the record for a given category
+    If point already exists for this category, then update it to new point type
+    """
     if category not in allowed_categories:
-        raise Exception('Category provided is not in the allowed list')
+        # Try mapping category from spoken text
+        if category in category_speech_map:
+            category = category_speech_map[category]
+        else:
+            raise Exception('Category provided is not in the allowed list')
 
     if point_type not in allowed_point_types:
-        raise Exception('Point type provided is not in the allowed list')
+        # Try mapping category from spoken text
+        if point_type in point_type_speech_map:
+            point_type = point_type_speech_map[point_type]
+        else:
+            raise Exception('Point type provided is not in the allowed list')
     
-    if awarded_date is None:
-        point = Point(category=category, point_type=point_type)
+    # Try and extract a matching
+    lookup_date = awarded_date if awarded_date is not None else datetime.date.today()
+    existing_points = Point.select().where((Point.category == category) & (Point.awarded_date == lookup_date))
+    
+    # If a point matches the date and category specificed
+    if existing_points.count() > 0:
+        point_to_update = existing_points[0]
+        point_to_update.point_type = point_type
+        point_to_update.save()
     else:
-        point = Point(category=category, point_type=point_type, awarded_date = awarded_date)
-    point.save()
+        if awarded_date is None:
+            point = Point(category=category, point_type=point_type)
+        else:
+            point = Point(category=category, point_type=point_type, awarded_date = awarded_date)
+        point.save()
+    print('{} point awarded to {}'.format(category, point_type))
 
 
 def get_all_points():
+    """
+    Extract all points earned 
+    """
     return list(Point.select())
 
 
 def points_today():
+    """
+    Extract all points earned today
+    """
     today_points = Point.select().where(Point.awarded_date==datetime.datetime.now()).order_by(Point.awarded_date, Point.category)
     return list(today_points)
 
@@ -53,6 +97,9 @@ def summary_by_point_type_for_period(period : str):
 
 
 def get_summary():
+    """
+    Get a summary of points earned this week and month
+    """
     week_summary = summary_by_point_type_for_period('week')
     month_summary = summary_by_point_type_for_period('month')
 

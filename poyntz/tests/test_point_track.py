@@ -29,18 +29,17 @@ def test_database_setup():
 def test_ladder():
     # Adding a point type that isn't supported should fail
     with pytest.raises(Exception):
-        add_point(allowed_categories[0], 'make_up_point_type')
+        award_point(allowed_categories[0], 'make_up_point_type')
     # Adding a category type that isn't supported should fail
     with pytest.raises(Exception):
-        add_point('made_up_category', allowed_point_types[0])
+        award_point('made_up_category', allowed_point_types[0])
 
     # Add 'good' points for all categories for today
     for category in allowed_categories:
-        add_point(category, allowed_point_types[0])
+        award_point(category, allowed_point_types[0])
     
     # Check that the points for today are in the database
     today = points_today()
     assert len(today) == len(allowed_categories)
-
 
     pass

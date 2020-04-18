@@ -5,14 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Poyntz",
+            "type": "python",
+            "request": "launch",
+            "program": "run.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+        },
+        {
             "name": "Python: Flask",
             "type": "python",
             "request": "launch",
             "module": "flask",
             "env": {
-                "FLASK_APP": "poyntz/poyntz.py",
+                "FLASK_APP": "run.py",
                 "FLASK_ENV": "development",
-                "FLASK_DEBUG": "0"
+                "FLASK_DEBUG": "1"
             },
             "args": [
                 "run",
