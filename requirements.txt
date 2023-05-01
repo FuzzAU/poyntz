@@ -1,4 +1,4 @@
-Flask==1.1.1
+Flask==2.3.2
 pytest==4.6.9
 peewee==3.13.2
 flask-peewee==3.0.3
